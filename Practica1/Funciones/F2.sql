@@ -2,7 +2,7 @@ USE BD2;
 GO
 
 CREATE FUNCTION dbo.F2
-    (@TutorProfileId INT)
+    (@TutorProfileId uniqueidentifier)
 RETURNS TABLE
 AS
 RETURN
