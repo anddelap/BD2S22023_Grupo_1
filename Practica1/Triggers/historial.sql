@@ -31,7 +31,11 @@ END;
 
 -- Trigger para el procedimiento PR5
 GO
-
--- Trigger para el procedimiento PR6
-
-
+CREATE TRIGGER TR_PR5
+ON practica1.Course
+AFTER INSERT, UPDATE
+AS
+BEGIN
+    INSERT INTO practica1.HistoryLog (Date, Description)
+    VALUES (GETDATE(), 'Se creo un nuevo curso');
+END;
