@@ -60,10 +60,10 @@ BEGIN
         END
     BEGIN TRY
         -- Validación de datos utilizando el procedimiento PR6
-        EXEC practica1.PR6 @Firstname, @Lastname, @Credits;
+        -- EXEC dbo.PR6 @Firstname, @Lastname, @Credits, @Salida;
 
         -- Validar si el correo ya está registrado
-        IF EXISTS (SELECT 1 FROM practica1.Usuarios WHERE Email = @Email)
+        IF EXISTS (SELECT * FROM practica1.Usuarios WHERE Email = @Email)
             BEGIN
                 SET @ErrorMessage = 'Ya hay un usuario asociado con el correo indicado';
                 SET @ErrorSeverity = 16;
@@ -125,3 +125,13 @@ BEGIN
         RAISERROR (@ErrorMessage, 16, 1);
     END CATCH;
 END;
+
+
+EXEC dbo.PR1 'Luis','Culajay','Wichox12@Hotmail.com', '2020-12-23 15:40:45.276','123',12;
+EXEC dbo.PR1 'Nando','Sandoval','Luisfecs@Hotmail.com', '2020-12-23 15:40:45.276','321',21;
+EXEC dbo.PR1 'Fer','San','SanFer@Hotmail.com', '2020-12-23 15:40:45.276','321',21;
+
+
+
+Select * fROM practica1.Usuarios;
+Select * fROM practica1.HistoryLog;
