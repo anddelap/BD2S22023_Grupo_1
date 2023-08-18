@@ -1,7 +1,7 @@
 USE BD2;
 GO
 
-CREATE OR ALTER FUNCTION dbo.F1
+CREATE FUNCTION dbo.F1
 (
     @CodCourse varchar(max)
 )
@@ -11,6 +11,7 @@ RETURN
 (
     SELECT U.Id, U.Firstname, U.Lastname
     FROM practica1.CourseAssignment AS CA
-    JOIN practica1.Usuarios AS U ON CA.UserId = U.Id
-    WHERE CA.CourseId = @CodCourse
+    JOIN practica1.Usuarios AS U ON CA.StudentId = U.Id
+    WHERE CA.CourseCodCourse = @CodCourse
 );
+GO

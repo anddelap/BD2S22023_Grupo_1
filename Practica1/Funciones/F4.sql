@@ -1,7 +1,7 @@
 USE BD2;
 GO
 
-CREATE OR ALTER FUNCTION practica1.F4 ()
+CREATE OR ALTER FUNCTION dbo.F4 ()
 RETURNS TABLE
 AS
 RETURN
@@ -9,3 +9,4 @@ RETURN
     SELECT Date, Description
     FROM practica1.HistoryLog
 );
+Go
