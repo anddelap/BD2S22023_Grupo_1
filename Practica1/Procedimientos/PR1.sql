@@ -60,7 +60,15 @@ BEGIN
         END
     BEGIN TRY
         -- Validación de datos utilizando el procedimiento PR6
-        -- EXEC dbo.PR6 @Firstname, @Lastname, @Credits, @Salida;
+        DECLARE @IsValid BIT;
+        EXEC dbo.PR6 'Usuarios', @Firstname, @Lastname, NULL, NULL, @IsValid OUTPUT;
+        IF(@IsValid = 0)
+            BEGIN
+                SET @ErrorMessage = 'Los atributos son inválidos';
+                SET @ErrorSeverity = 16;
+                RAISERROR(@ErrorMessage,@ErrorSeverity,1);
+                RETURN;
+            END
 
         -- Validar si el correo ya está registrado
         IF EXISTS (SELECT * FROM practica1.Usuarios WHERE Email = @Email)

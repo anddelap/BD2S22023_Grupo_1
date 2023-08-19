@@ -26,7 +26,15 @@ BEGIN
             RAISERROR(@ErrorMessage,@ErrorSeverity,1);
             RETURN;
         END
-	-- Verificar si el usuario existe y su cuenta está confirmada
+    DECLARE @IsValid BIT;
+    EXEC dbo.PR6 'Course', NULL, NULL, @Name, @CreditsRequired, @IsValid OUTPUT;
+    IF(@IsValid = 0)
+        BEGIN
+            SET @ErrorMessage = 'Los atributos son inválidos';
+            SET @ErrorSeverity = 16;
+            RAISERROR(@ErrorMessage,@ErrorSeverity,1);
+            RETURN;
+        END
     DECLARE @id INT;
     SELECT @id = CodCourse FROM practica1.Course WHERE CodCourse = @CodCourse;
 	IF(@id IS NOT NULL)

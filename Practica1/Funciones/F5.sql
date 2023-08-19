@@ -1,7 +1,7 @@
 USE BD2;
 GO
 
-CREATE FUNCTION practica1.Func_usuarios()
+CREATE FUNCTION dbo.F5()
 RETURNS TABLE
 AS
 RETURN (
