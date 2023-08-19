@@ -1,7 +1,12 @@
-USE BD2;
+USE [BD2]
+GO
+/****** Object:  StoredProcedure [dbo].[PR1]    Script Date: 18/08/2023 18:11:25 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER PROCEDURE dbo.PR1 
+ALTER   PROCEDURE [dbo].[PR1] 
     @Firstname varchar(max),
     @Lastname varchar(max), 
     @Email varchar(max), 
@@ -133,13 +138,3 @@ BEGIN
         RAISERROR (@ErrorMessage, 16, 1);
     END CATCH;
 END;
-
-
-EXEC dbo.PR1 'Luis','Culajay','Wichox12@Hotmail.com', '2020-12-23 15:40:45.276','123',12;
-EXEC dbo.PR1 'Nando','Sandoval','Luisfecs@Hotmail.com', '2020-12-23 15:40:45.276','321',21;
-EXEC dbo.PR1 'Fer','San','SanFer@Hotmail.com', '2020-12-23 15:40:45.276','321',21;
-
-
-
-Select * fROM practica1.Usuarios;
-Select * fROM practica1.HistoryLog;
