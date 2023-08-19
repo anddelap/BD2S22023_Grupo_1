@@ -14,9 +14,6 @@ BEGIN
 
     IF @UserId IS NOT NULL
     BEGIN
-        -- Verificar si el estudiante ya tiene el rol de tutor
-        IF NOT EXISTS (SELECT 1 FROM practica1.UsuarioRole WHERE UserId = @UserId AND RoleId = '2cf8e1cf-3cd6-44f3-8f86-1386b7c17657') -- Tutor RoleId
-        BEGIN
             -- Insertar el rol de tutor para el estudiante
             INSERT INTO practica1.UsuarioRole (RoleId, UserId, IsLatestVersion)
             VALUES ('2cf8e1cf-3cd6-44f3-8f86-1386b7c17657', @UserId, 1);
@@ -36,11 +33,6 @@ BEGIN
             VALUES (@UserId, @Message, GETDATE());
 
             PRINT 'El estudiante ha sido promovido como tutor y se le ha notificado';
-        END
-        ELSE
-        BEGIN
-            PRINT 'El estudiante ya es tutor.';
-        END
     END
     ELSE
     BEGIN
