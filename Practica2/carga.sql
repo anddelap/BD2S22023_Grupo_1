@@ -1,9 +1,9 @@
 use bd2_prac2;
 
 #Pacientes 
-LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Carga/Pacientes.csv'
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/Carga/Practica2/Pacientes.csv'
 INTO TABLE paciente
-FIELDS TERMINATED BY ','
+FIELDS TERMINATED BY ';'
 IGNORE 1 LINES;
 SELECT * FROM bd2_prac2.paciente;
 SELECT count(*) FROM bd2_prac2.paciente;
