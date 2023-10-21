@@ -1,0 +1,56 @@
+.cal-body{
+    background-color: #E5E5E5;
+    max-width: 500px;
+    margin: auto;
+    margin-top: 0px;
+    border-radius: 5px;
+    box-shadow: 5px 5px 10px grey;
+    height: calc(100vh - 200px);
+}
+.cal-display{
+    height: 40%;
+    border-radius: 5px;
+}
+.form-control:disabled{
+    opacity: 0;
+    text-align: end;
+    height: 100%;
+    font-size: 5rem;
+    color: #324e3c;
+    background-color: #82c59c !important;
+}
+.cal-buttons{
+    height: 60%;
+    display: flex;
+    justify-content: center;
+}
+.cal-buttons .container{
+    display: flex;
+    align-content: center;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.cal-button{
+    padding: 15px !important;
+    font-size: 1.5rem !important;
+    width: 100%;
+    height: 100% !important;
+    background-color: rgb(88, 88, 88) !important;
+    border: black !important;
+}
+.cal-result{
+    padding: 15px !important;
+    font-size: 1.5rem !important;
+    width: 100%;
+    height: 100% !important;
+    border: orange !important;
+    background-color: rgb(231, 150, 0) !important;
+}
+.cal-result:hover{
+    border: orange;
+    background-color: rgb(243, 158, 0) !important;
+}
+.cal-button:hover{
+    background-color: #2F2F2F !important;
+}

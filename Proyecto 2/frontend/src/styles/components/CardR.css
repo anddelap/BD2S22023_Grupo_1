@@ -1,0 +1,13 @@
+.c-button{
+    display: flex;
+    justify-content: center;  
+}
+.res-body{
+    margin-top: 50px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-bottom: 70px;
+}

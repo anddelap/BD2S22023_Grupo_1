@@ -1,0 +1,44 @@
+@media all and (min-width: 480px) {
+    .Login {
+        padding: 60px 0;
+    }
+
+    .Login form {
+        margin: 0 auto;
+        max-width: 320px;
+    }
+}
+.brand{
+    color: white;
+}
+.title{
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: -30px;
+}
+.navbar-brand{
+    margin-left: 20px;
+}
+.SubmitBtn {
+    margin-top: 20px;
+    margin-right: 10px;
+}
+.password{
+    margin-top: 20px; 
+}
+
+.Login {
+    background-color: #E5E5E5;
+    max-width: 600px;
+    margin: auto;
+    margin-top: 50px;
+    border-radius: 5px;
+    box-shadow: 5px 5px 10px grey;
+}
+
+.btns{
+    text-align: center;
+}
+.signin{
+    margin-top: 10px;
+}

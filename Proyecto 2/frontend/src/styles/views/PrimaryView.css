@@ -1,0 +1,18 @@
+.brand{
+    color: white;
+}
+
+.p-title{
+    width: 100%;
+    text-align: center;
+}
+
+.p-subtitle{
+    width: 100%;
+    text-align: center;
+}
+
+.p-row{
+    display: flex;
+    justify-content: center;
+}

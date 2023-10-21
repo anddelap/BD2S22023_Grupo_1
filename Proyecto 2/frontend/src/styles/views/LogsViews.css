@@ -1,0 +1,13 @@
+.logs-table{
+    width: 90% !important;
+    margin-top: 70px;
+    display: flex;
+    justify-content: flex-end;
+    text-align: center;
+}
+
+.logs-info{
+    border-radius: 5px !important;
+    width: 90% !important;
+    
+}
