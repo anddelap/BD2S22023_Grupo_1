@@ -19,9 +19,9 @@ CREATE SCHEMA IF NOT EXISTS `BD2_Prac2` DEFAULT CHARACTER SET utf8 ;
 USE `BD2_Prac2` ;
 
 -- -----------------------------------------------------
--- Table `BD2_Prac2`.`HABITACION`
+-- Table `BD2_Prac2`.`Habitacion`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`HABITACION` (
+CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`Habitacion` (
   `idHabitacion` INT NOT NULL AUTO_INCREMENT,
   `habitacion` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`idHabitacion`))
@@ -29,9 +29,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `BD2_Prac2`.`LOG_HABITACION`
+-- Table `BD2_Prac2`.`log_habitacion`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`LOG_HABITACION` (
+CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`log_habitacion` (
   `timestampx` VARCHAR(100) NOT NULL,
   `statusx` VARCHAR(45) NOT NULL,
   `idHabitacion` INT NOT NULL,
@@ -39,16 +39,16 @@ CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`LOG_HABITACION` (
   INDEX `fk_log_habitacion_Habitacion_idx` (`idHabitacion` ASC) VISIBLE,
   CONSTRAINT `fk_log_habitacion_Habitacion`
     FOREIGN KEY (`idHabitacion`)
-    REFERENCES `BD2_Prac2`.`HABITACION` (`idHabitacion`)
+    REFERENCES `BD2_Prac2`.`Habitacion` (`idHabitacion`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `BD2_Prac2`.`PACIENTE`
+-- Table `BD2_Prac2`.`Paciente`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`PACIENTE` (
+CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`Paciente` (
   `idPaciente` INT NOT NULL AUTO_INCREMENT,
   `edad` INT NOT NULL,
   `genero` VARCHAR(20) NOT NULL,
@@ -57,9 +57,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `BD2_Prac2`.`LOG_ACTIVIDAD`
+-- Table `BD2_Prac2`.`log_actividad`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`LOG_ACTIVIDAD` (
+CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`log_actividad` (
   `id_log_actividad` INT NOT NULL AUTO_INCREMENT,
   `timestampx` VARCHAR(100) NOT NULL,
   `actividad` VARCHAR(500) NOT NULL,
@@ -70,12 +70,12 @@ CREATE TABLE IF NOT EXISTS `BD2_Prac2`.`LOG_ACTIVIDAD` (
   INDEX `fk_LOG_ACTIVIDAD_PACIENTE1_idx` (`PACIENTE_idPaciente` ASC) VISIBLE,
   CONSTRAINT `fk_LOG_ACTIVIDAD_HABITACION1`
     FOREIGN KEY (`HABITACION_idHabitacion`)
-    REFERENCES `BD2_Prac2`.`HABITACION` (`idHabitacion`)
+    REFERENCES `BD2_Prac2`.`Habitacion` (`idHabitacion`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_LOG_ACTIVIDAD_PACIENTE1`
     FOREIGN KEY (`PACIENTE_idPaciente`)
-    REFERENCES `BD2_Prac2`.`PACIENTE` (`idPaciente`)
+    REFERENCES `BD2_Prac2`.`Paciente` (`idPaciente`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

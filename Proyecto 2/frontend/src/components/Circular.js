@@ -7,9 +7,9 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export default function Circular(props) {
     const labels = [];
     const percentages = [];
-    const { datos } = props;
+    const { datos,label,data } = props;
     //console.log(props.datos);
-    let etiquetas = Object.keys(datos);  
+    /* let etiquetas = Object.keys(datos);  
     //console.log(etiquetas);
     etiquetas.forEach(element => {
         datos[element].forEach(element2 => {
@@ -21,16 +21,16 @@ export default function Circular(props) {
         datos[element].forEach(element2 => {
             percentages.push(element2.porcentaje_votos);
         });
-    });
+    }); */
     //console.log(percentages);
 
     //console.log(labels);
     
-    const data = {
+   /*  const data = {
         labels: labels,
         datasets: [
             {
-                label: '% of de votos',
+                label: label,
                 data: percentages,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
@@ -51,9 +51,9 @@ export default function Circular(props) {
                 borderWidth: 1,
             },
         ],
-    };
+    }; */
     return (
-        <div>
+        <div className='w-50'>
             <Doughnut data={data} />
         </div>
     )

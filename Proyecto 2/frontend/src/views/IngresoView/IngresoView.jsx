@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import GeneralLayout from '../../layouts/GeneralLayout'
 import { Button, Container, Form, Row } from 'react-bootstrap'
+import { getAllHabitacion, getAllPaciente } from '../../api/reportesApi'
+import { useQuery } from 'react-query'
 
 export default function IngresoView() {
   const [base, setBase] = React.useState('1')
@@ -8,6 +10,18 @@ export default function IngresoView() {
   const [habitacion, setHabitacion] = React.useState('')
   const [paciente, setPaciente] = React.useState('')
   const [descripcion, setDescripcion] = React.useState('')
+
+  /* const { isLoading: loadingPaciente, error: errorP, data: pacientes } = useQuery({
+    queryKey: ['pacientes'],
+    queryFn: () => getAllPaciente(),
+  }) */
+
+  const { isLoading: loadingHabitaciones, error: errorH, data: habitaciones } = useQuery({
+    queryKey: ['habitaciones'],
+    queryFn: () => getAllHabitacion(),
+  })
+
+  //console.log(habitaciones)
 
   function validateForm() {
     if (log === 'loghabitacion') {
@@ -42,6 +56,8 @@ export default function IngresoView() {
     console.log(data)
   }
 
+  if (loadingHabitaciones) return 'Loading...'
+  if (errorH) return 'An error has occurred: ' + errorH.message
 
   return (
     <GeneralLayout title='Ingreso de datos'>
@@ -87,7 +103,11 @@ export default function IngresoView() {
                       }
                     }>
                     <option value=''>Elige una habitacion...</option>
-                    <option value='asddas'>assad</option>
+                    {
+                      !loadingHabitaciones && habitaciones.map((habitacion, index) => (
+                        <option key={index} value={habitacion.idHabitacion}>{habitacion.habitacion}</option>
+                      ))
+                    }
 
                   </Form.Select>
                 </Form.Group>
@@ -103,6 +123,7 @@ export default function IngresoView() {
                           }
                         }>
                         <option value=''>Elige una habitacion...</option>
+
                       </Form.Select>
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -114,6 +135,11 @@ export default function IngresoView() {
                           }
                         }>
                         <option value=''>Elige un paciente...</option>
+                        {/* {
+                          !loadingPaciente && pacientes.map((paciente,index) => (
+                            <option key={index} value={paciente.idPaciente}>{paciente.idPaciente}</option>
+                          ))
+                        } */}
                       </Form.Select>
                     </Form.Group>
                   </>
@@ -124,8 +150,8 @@ export default function IngresoView() {
             <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
               <Form.Label>Descripcion</Form.Label>
               <Form.Control as="textarea"
-              onChange={handleDescripcionChange}
-              value={descripcion}
+                onChange={handleDescripcionChange}
+                value={descripcion}
               />
             </Form.Group>
             <Button type="submit" disabled={validateForm()}>Submit</Button>
