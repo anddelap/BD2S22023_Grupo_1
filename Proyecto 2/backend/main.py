@@ -117,6 +117,65 @@ def get_mysql_reporte_5():
         rows.append({'edad' : row[0], 'total_atendidos' : row[1]})
     return jsonify(rows)
 
+# Reporte 6 - MYSQL
+@app.route('/mysql/reporte/6', methods=['GET'])
+def get_mysql_reporte_6():
+    query = """
+        SELECT
+        H.habitacion,
+        COUNT(L.PACIENTE_idPaciente) AS pacientes_en_habitacion
+        FROM habitacion H
+        LEFT JOIN log_actividad L ON H.idHabitacion = L.HABITACION_idHabitacion
+        GROUP BY H.habitacion
+        ORDER BY pacientes_en_habitacion DESC
+        LIMIT 5;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    rows = []
+    for row in result:
+        rows.append({'habitacion' : row[0], 'pacientes_en_habitacion' : row[1]})
+    return jsonify(rows)
+
+# Reporte 7 - MYSQL
+@app.route('/mysql/reporte/7', methods=['GET'])
+def get_mysql_reporte_7():
+    query = """
+        SELECT
+        H.habitacion,
+        COUNT(L.PACIENTE_idPaciente) AS pacientes_en_habitacion
+        FROM Habitacion H
+        LEFT JOIN log_actividad L ON H.idHabitacion = L.HABITACION_idHabitacion
+        GROUP BY H.habitacion
+        ORDER BY pacientes_en_habitacion ASC
+        LIMIT 5;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    rows = []
+    for row in result:
+        rows.append({'habitacion' : row[0], 'pacientes_en_habitacion' : row[1]})
+    return jsonify(rows)
+
+# Reporte 8 - MYSQL
+@app.route('/mysql/reporte/8', methods=['GET'])
+def get_mysql_reporte_8():
+    query = """
+        SELECT
+        DATE(timestampx) AS fecha,
+        COUNT(DISTINCT PACIENTE_idPaciente) AS pacientes
+        FROM log_actividad
+        GROUP BY fecha
+        ORDER BY pacientes DESC
+        LIMIT 1;
+    """
+    cursor.execute(query)
+    result = cursor.fetchall()
+    rows = []
+    for row in result:
+        rows.append({'fecha' : row[0], 'pacientes' : row[1]})
+    return jsonify(rows)
+
 # Endpoint para consultas POST
 @app.route('/query', methods=['POST'])
 def post_query():
