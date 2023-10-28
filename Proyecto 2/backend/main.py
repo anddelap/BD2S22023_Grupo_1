@@ -2,16 +2,16 @@ from flask import Flask, request, jsonify
 import mysql.connector
 import pymongo
 from flask_cors import CORS
-
+from decouple import config
 
 app = Flask(__name__)
 CORS(app)
 # Configura la conexión a la base de datos MySQL
 db = mysql.connector.connect(
     host="localhost",
-    user="root",
-    password="root123",
-    database="bd2_p1"
+    user=config('MYSQL_USER'),
+    password=config('MYSQL_PASSWORD'),
+    database=config('MYSQL_DATABASE')
 )
 cursor = db.cursor()
 
