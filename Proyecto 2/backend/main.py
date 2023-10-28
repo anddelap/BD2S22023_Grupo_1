@@ -3,7 +3,7 @@ import mysql.connector
 import pymongo
 from flask_cors import CORS
 from decouple import config
-import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
