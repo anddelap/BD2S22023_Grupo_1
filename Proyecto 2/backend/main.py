@@ -3,6 +3,7 @@ import mysql.connector
 import pymongo
 from flask_cors import CORS
 from decouple import config
+import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -21,6 +22,46 @@ mongodb_url = "mongodb+srv://admin:admin123@cluster0.i9abrxz.mongodb.net/"
 client = pymongo.MongoClient(mongodb_url)
 # Selecciona la base de datos
 dbMongo = client['Proyecto1']
+
+
+# Endpoint para consultas POST
+
+@app.route('/query', methods=['POST'])
+def post_query():
+    data = request.get_json()
+    query = data.get('query')
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return jsonify(result)
+
+# LOGS
+
+@app.route('/logs', methods=['POST'])
+def logs():
+    data = request.get_json()
+    base = data.get('base')
+    log = data.get('log')
+    habitacion = data.get('habitacion')
+    paciente = data.get('paciente')
+    descripcion = data.get('descripcion')
+    now = datetime.now().strftime('%m/%d/%Y %I:%M:%S %p')
+    result = {}
+    if(base == 'mysql'):
+        if(log == 'logactividad'):
+            query = "INSERT INTO LOG_ACTIVIDAD (timestampx, actividad, idHabitacion, idPaciente) VALUES (%s, %s, %s, %s);"
+            values = (now, descripcion, habitacion, paciente)
+            cursor.execute(query, values)
+            db.commit()
+            return jsonify({'status': 'OK'})
+        elif(log == 'loghabitacion'):
+            query = "INSERT INTO LOG_HABITACION (timestampx, statusx, idHabitacion) VALUES (%s, %s, %s);"
+            values = (now, descripcion, habitacion)
+            cursor.execute(query, values)
+            db.commit()
+            return jsonify({'status': 'OK'})
+    return jsonify(result)
+
+
 
 # Endpoint para consultas GET
 
@@ -77,8 +118,8 @@ def get_mysql_reporte_2():
     query = """
         SELECT
         H.habitacion,
-        COUNT(L.idPaciente) AS pacientes_en_habitacion
-        FROM HABITACION H
+        COUNT(L.idHabitacion) AS pacientes_en_habitacion
+        FROM habitacion H
         LEFT JOIN LOG_ACTIVIDAD L ON H.idHabitacion = L.idHabitacion
         GROUP BY H.habitacion;
     """
@@ -216,17 +257,6 @@ def get_mysql_reporte_8():
     for row in result:
         rows.append({'fecha': row[0], 'pacientes': row[1]})
     return jsonify(rows)
-
-# Endpoint para consultas POST
-
-@app.route('/query', methods=['POST'])
-def post_query():
-    data = request.get_json()
-    query = data.get('query')
-    cursor.execute(query)
-    result = cursor.fetchall()
-    return jsonify(result)
-
 
 # Reporte 1 - MongoDB
 @app.route('/mongodb/reporte/1', methods=['GET'])
