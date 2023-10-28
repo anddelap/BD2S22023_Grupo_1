@@ -1,16 +1,17 @@
 from flask import Flask, request, jsonify
 import mysql.connector
 import pymongo
-from flask_cors import CORS
+from cassandra.cluster import Cluster
 from decouple import config
-from datetime import datetime
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 CORS(app)
 # Configura la conexión a la base de datos MySQL
 db = mysql.connector.connect(
     host="localhost",
-    user=config('MYSQL_USER'),
+    user= config('MYSQL_USER'),
     password=config('MYSQL_PASSWORD'),
     database=config('MYSQL_DATABASE')
 )
@@ -24,43 +25,10 @@ client = pymongo.MongoClient(mongodb_url)
 dbMongo = client['Proyecto1']
 
 
-# Endpoint para consultas POST
-
-@app.route('/query', methods=['POST'])
-def post_query():
-    data = request.get_json()
-    query = data.get('query')
-    cursor.execute(query)
-    result = cursor.fetchall()
-    return jsonify(result)
-
-# LOGS
-
-@app.route('/logs', methods=['POST'])
-def logs():
-    data = request.get_json()
-    base = data.get('base')
-    log = data.get('log')
-    habitacion = data.get('habitacion')
-    paciente = data.get('paciente')
-    descripcion = data.get('descripcion')
-    now = datetime.now().strftime('%m/%d/%Y %I:%M:%S %p')
-    result = {}
-    if(base == 'mysql'):
-        if(log == 'logactividad'):
-            query = "INSERT INTO LOG_ACTIVIDAD (timestampx, actividad, idHabitacion, idPaciente) VALUES (%s, %s, %s, %s);"
-            values = (now, descripcion, habitacion, paciente)
-            cursor.execute(query, values)
-            db.commit()
-            return jsonify({'status': 'OK'})
-        elif(log == 'loghabitacion'):
-            query = "INSERT INTO LOG_HABITACION (timestampx, statusx, idHabitacion) VALUES (%s, %s, %s);"
-            values = (now, descripcion, habitacion)
-            cursor.execute(query, values)
-            db.commit()
-            return jsonify({'status': 'OK'})
-    return jsonify(result)
-
+# Conecta con el clúster de Cassandra
+cluster = Cluster(['127.0.0.1'])  # Sustituye por la dirección IP de tu clúster
+session = cluster.connect()
+session.execute("USE proyecto2")
 
 
 # Endpoint para consultas GET
@@ -118,8 +86,8 @@ def get_mysql_reporte_2():
     query = """
         SELECT
         H.habitacion,
-        COUNT(L.idHabitacion) AS pacientes_en_habitacion
-        FROM habitacion H
+        COUNT(L.idPaciente) AS pacientes_en_habitacion
+        FROM HABITACION H
         LEFT JOIN LOG_ACTIVIDAD L ON H.idHabitacion = L.idHabitacion
         GROUP BY H.habitacion;
     """
@@ -258,6 +226,18 @@ def get_mysql_reporte_8():
         rows.append({'fecha': row[0], 'pacientes': row[1]})
     return jsonify(rows)
 
+# Endpoint para consultas POST
+
+
+@app.route('/query', methods=['POST'])
+def post_query():
+    data = request.get_json()
+    query = data.get('query')
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return jsonify(result)
+
+
 # Reporte 1 - MongoDB
 @app.route('/mongodb/reporte/1', methods=['GET'])
 def get_mongo_reporte_1():
@@ -267,6 +247,8 @@ def get_mongo_reporte_1():
     return jsonify(list(resultados))
 
 # Reporte 2 - MongoDB
+
+
 @app.route('/mongodb/reporte/2', methods=['GET'])
 def get_mongo_reporte_2():
     coleccion = dbMongo['habitacion']
@@ -275,6 +257,8 @@ def get_mongo_reporte_2():
     return jsonify(list(resultados))
 
 # Reporte 3 - MongoDB
+
+
 @app.route('/mongodb/reporte/3', methods=['GET'])
 def get_mongo_reporte_3():
     coleccion = dbMongo['paciente']
@@ -283,6 +267,8 @@ def get_mongo_reporte_3():
     return jsonify(list(resultados))
 
 # Reporte 4 - MongoDB
+
+
 @app.route('/mongodb/reporte/4', methods=['GET'])
 def get_mongo_reporte_4():
     coleccion = dbMongo['paciente']
@@ -291,6 +277,8 @@ def get_mongo_reporte_4():
     return jsonify(list(resultados))
 
 # Reporte 5 - MongoDB
+
+
 @app.route('/mongodb/reporte/5', methods=['GET'])
 def get_mongo_reporte_5():
     coleccion = dbMongo['paciente']
@@ -299,6 +287,8 @@ def get_mongo_reporte_5():
     return jsonify(list(resultados))
 
 # Reporte 6 - MongoDB
+
+
 @app.route('/mongodb/reporte/6', methods=['GET'])
 def get_mongo_reporte_6():
     coleccion = dbMongo['habitacion']
@@ -307,6 +297,8 @@ def get_mongo_reporte_6():
     return jsonify(list(resultados))
 
 # Reporte 7 - MongoDB
+
+
 @app.route('/mongodb/reporte/7', methods=['GET'])
 def get_mongo_reporte_7():
     coleccion = dbMongo['habitacion']
@@ -315,6 +307,8 @@ def get_mongo_reporte_7():
     return jsonify(list(resultados))
 
 # Reporte 8 - MongoDB
+
+
 @app.route('/mongodb/reporte/8', methods=['GET'])
 def get_mongo_reporte_8():
     coleccion = dbMongo['log_actividad']
@@ -322,6 +316,134 @@ def get_mongo_reporte_8():
     resultados = coleccion.aggregate(query)
     return jsonify(list(resultados))
 
+
+# Reporte 1 - CASSANDRA
+@app.route('/cassandra/reporte/1', methods=['GET'])
+def get_cassandra_reporte_1():
+    query = "SELECT COUNT(*) AS total FROM paciente WHERE edad < 18 ALLOW FILTERING"
+    result = session.execute(query)
+    total = result.one().total
+    query = "SELECT COUNT(*) AS total FROM paciente WHERE edad >= 18 and edad <= 60 ALLOW FILTERING"
+    result = session.execute(query)
+    total2 = result.one().total
+    query = "SELECT COUNT(*) AS total FROM paciente WHERE edad > 60 ALLOW FILTERING"
+    result = session.execute(query)
+    total3 = result.one().total
+
+    # Devolver el valor como una respuesta JSON
+    return jsonify([{'categoria': 'Pediatrico', 'total_pacientes': total}, {'categoria': 'Mediana Edad', 'total_pacientes': total2}, {'categoria': 'Geriatrico', 'total_pacientes': total3}])
+
+# Reporte 2 - CASSANDRA
+@app.route('/cassandra/reporte/2', methods=['GET'])
+def get_cassandra_reporte_2():
+    query = "SELECT * FROM cons2"
+    result = session.execute(query)
+     # Transformar los resultados en una lista de diccionarios
+    report_data = []
+    for row in result:
+        report_data.append({
+            'habitacion': row.habitacion,
+            'pacientes_en_habitacion': row.pacientes_en_habitacion
+        })
+
+    # Devolver la lista de diccionarios como JSON
+    return jsonify(report_data)
+
+# Reporte 3 - CASSANDRA
+@app.route('/cassandra/reporte/3', methods=['GET'])
+def get_cassandra_reporte_3():
+    query = "SELECT * FROM cons3"
+    result = session.execute(query)
+     # Transformar los resultados en una lista de diccionarios
+    report_data = []
+    for row in result:
+        report_data.append({
+            'genero': row.genero,
+            'total_pacientes': row.total_pacientes
+        })
+
+    # Devolver la lista de diccionarios como JSON
+    return jsonify(report_data)
+
+# Reporte 4 - CASSANDRA
+@app.route('/cassandra/reporte/4', methods=['GET'])
+def get_cassandra_reporte_4():
+    query = "SELECT * FROM cons4"
+    result = session.execute(query)
+     # Transformar los resultados en una lista de diccionarios
+    report_data = []
+    for row in result:
+        report_data.append({
+            'edad': row.edad,
+            'total_atendidos': row.total_atendidos
+        })
+
+    # Devolver la lista de diccionarios como JSON
+    return jsonify(report_data)
+
+# Reporte 5 - CASSANDRA
+@app.route('/cassandra/reporte/5', methods=['GET'])
+def get_cassandra_reporte_5():
+    query = "SELECT * FROM cons5"
+    result = session.execute(query)
+     # Transformar los resultados en una lista de diccionarios
+    report_data = []
+    for row in result:
+        report_data.append({
+            'edad': row.edad,
+            'total_atendidos': row.total_atendidos
+        })
+
+    # Devolver la lista de diccionarios como JSON
+    return jsonify(report_data)
+
+# Reporte 6 - CASSANDRA
+@app.route('/cassandra/reporte/6', methods=['GET'])
+def get_cassandra_reporte_6():
+    query = "SELECT * FROM cons6"
+    result = session.execute(query)
+     # Transformar los resultados en una lista de diccionarios
+    report_data = []
+    for row in result:
+        report_data.append({
+            'habitacion': row.habitacion,
+            'pacientes_en_habitacion': row.pacientes_en_habitacion
+        })
+
+    # Devolver la lista de diccionarios como JSON
+    return jsonify(report_data)
+
+# Reporte 7 - CASSANDRA
+@app.route('/cassandra/reporte/7', methods=['GET'])
+def get_cassandra_reporte_7():
+    query = "SELECT * FROM cons7"
+    result = session.execute(query)
+     # Transformar los resultados en una lista de diccionarios
+    report_data = []
+    for row in result:
+        report_data.append({
+            'habitacion': row.habitacion,
+            'pacientes_en_habitacion': row.pacientes_en_habitacion
+        })
+
+    # Devolver la lista de diccionarios como JSON
+    return jsonify(report_data)
+
+# Reporte 8 - CASSANDRA
+@app.route('/cassandra/reporte/8', methods=['GET'])
+def get_cassandra_reporte_8():
+    query = "SELECT * FROM cons8"
+    result = session.execute(query)
+     # Transformar los resultados en una lista de diccionarios
+    report_data = []
+    for row in result:
+        report_data.append({
+            'fecha': row.fecha,
+            'pacientes': row.pacientes
+        })
+
+    # Devolver la lista de diccionarios como JSON
+    return jsonify(report_data)
 
 def MongoC(rep):
     print("Hola desde mi_funcion")
@@ -372,6 +494,13 @@ def MongoC(rep):
                         '$sum': 1
                     }
                 }
+            },
+            {
+                '$project': {
+                    '_id': 0,
+                    'categoria': '$_id',
+                    'total_pacientes': '$total'
+                }
             }
         ]
     elif rep == 2:
@@ -402,6 +531,12 @@ def MongoC(rep):
                         '$sum': 1
                     }
                 }
+            }, {
+                '$project': {
+                    '_id': 0,
+                    'genero': '$_id',
+                    'total_pacientes': '$total'
+                }
             }
         ]
     elif rep == 4:
@@ -419,6 +554,12 @@ def MongoC(rep):
                 }
             }, {
                 '$limit': 5
+            }, {
+                '$project': {
+                    '_id': 0,
+                    'edad': '$_id',
+                    'total_atendidos': '$total'
+                }
             }
         ]
     elif rep == 5:
@@ -436,6 +577,12 @@ def MongoC(rep):
                 }
             }, {
                 '$limit': 5
+            }, {
+                '$project': {
+                    '_id': 0,
+                    'edad': '$_id',
+                    'total_atendidos': '$total'
+                }
             }
         ]
     elif rep == 6:
