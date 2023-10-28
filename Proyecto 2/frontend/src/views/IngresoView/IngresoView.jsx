@@ -3,6 +3,7 @@ import GeneralLayout from '../../layouts/GeneralLayout'
 import { Button, Container, Form, Row } from 'react-bootstrap'
 import { getAllHabitacion, getAllPaciente } from '../../api/reportesApi'
 import { useQuery } from 'react-query'
+import { useSendLog } from '../../api/logApi'
 
 export default function IngresoView() {
   const [base, setBase] = React.useState('1')
@@ -11,10 +12,10 @@ export default function IngresoView() {
   const [paciente, setPaciente] = React.useState('')
   const [descripcion, setDescripcion] = React.useState('')
 
-  /* const { isLoading: loadingPaciente, error: errorP, data: pacientes } = useQuery({
+  const { isLoading: loadingPaciente, error: errorP, data: pacientes } = useQuery({
     queryKey: ['pacientes'],
     queryFn: () => getAllPaciente(),
-  }) */
+  })
 
   const { isLoading: loadingHabitaciones, error: errorH, data: habitaciones } = useQuery({
     queryKey: ['habitaciones'],
@@ -31,6 +32,8 @@ export default function IngresoView() {
     }
     return true
   }
+
+  const { mutate: mutSendLog, data, isLoading, isError, error } = useSendLog();
 
   useEffect(() => {
     setHabitacion('')
@@ -53,8 +56,11 @@ export default function IngresoView() {
       'paciente': paciente,
       'descripcion': descripcion
     }
+    mutSendLog(data)
     console.log(data)
   }
+
+  //console.log(pacientes)
 
   if (loadingHabitaciones) return 'Loading...'
   if (errorH) return 'An error has occurred: ' + errorH.message
@@ -72,11 +78,11 @@ export default function IngresoView() {
                     setBase(event.target.value)
                   }
                 }>
-                <option value='1'>Elige una base de datos...</option>
-                <option value='1'>MySQL</option>
-                <option value='2'>MongoDB</option>
-                <option value='3'>Cassandra</option>
-                <option value='4'>Redis</option>
+                <option value=''>Elige una base de datos...</option>
+                <option value='mysql'>MySQL</option>
+                <option value='mongodb'>MongoDB</option>
+                <option value='cassandra'>Cassandra</option>
+                <option value='redis'>Redis</option>
               </Form.Select>
             </Form.Group>
             <Form.Group className="mb-3">
@@ -123,12 +129,16 @@ export default function IngresoView() {
                           }
                         }>
                         <option value=''>Elige una habitacion...</option>
-
+                        {
+                          !loadingHabitaciones && habitaciones.map((habitacion, index) => (
+                            <option key={index} value={habitacion.idHabitacion}>{habitacion.habitacion}</option>
+                          ))
+                        }
                       </Form.Select>
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label>Paciente</Form.Label>
-                      <Form.Select
+                      {/* <Form.Select
                         onChange={
                           (event) => {
                             setPaciente(event.target.value)
@@ -139,8 +149,19 @@ export default function IngresoView() {
                           !loadingPaciente && pacientes.map((paciente,index) => (
                             <option key={index} value={paciente.idPaciente}>{paciente.idPaciente}</option>
                           ))
-                        } */}
-                      </Form.Select>
+                        }
+                      </Form.Select> */}
+                      <Form.Control
+                        type='number'
+                        max={pacientes[pacientes.length - 1].idPaciente}
+                        min={pacientes[0].idPaciente}
+                        onChange={
+                          (event) => {
+                            setPaciente(event.target.value)
+                          }
+                        }
+                        value={paciente}
+                      />
                     </Form.Group>
                   </>
                 )

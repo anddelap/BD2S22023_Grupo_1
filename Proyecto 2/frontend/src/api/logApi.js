@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useMutation, useQueryClient } from 'react-query';
 import { variable } from './variables';
 const baseUrl = variable.base_url;
 
@@ -7,11 +8,9 @@ const api = axios.create({
     baseURL: baseUrl,
 });
 
-export const getDatetime = () => api.get('/datetime').then(res=>res.data);
-
 //get sugerencias de amistad
 export const sendLog = (data) => {
-    return api.post('/friend/getNotFriends', data)
+    return api.post('/logs', data)
 };
 
 export const useSendLog = () =>{
